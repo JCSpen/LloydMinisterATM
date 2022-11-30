@@ -13,21 +13,6 @@ using System.Threading.Tasks;
 
     protected double Balance { get; set; }
 
-    protected class SimpleDeposit : Account
-    {
-        public SimpleDeposit(string type, int iD, double balance) : base(type, iD, balance)
-        {
-
-        }
-    }
-
-    protected class LtDeposit : Account
-    {
-        public LtDeposit(string type, int iD, double balance) : base(type, iD, balance)
-        {
-
-        }
-    }
 
     public Account(string type, int iD, double balance)
     {
@@ -47,6 +32,16 @@ using System.Threading.Tasks;
     public string GetTransaction()
     {
         return "Last";
+    }
+
+    public string GetAccountType()
+    {
+        return Type;
+    }
+
+    public int GetID()
+    {
+        return ID;
     }
 
 }

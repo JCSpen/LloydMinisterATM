@@ -9,7 +9,9 @@ using System.Threading.Tasks;
     {
     protected int CardNum { get; set; }
     protected int Pin { get; set; }
-    protected Account LinkedAccount { get; set; }
+    public Account LinkedAccount { get; set; }
+
+    protected List<Account> LinkedAccounts { get; set; }
 
     public Card(int cardNum, int pin,Account account)
     {
@@ -21,6 +23,19 @@ using System.Threading.Tasks;
     public int GetPin()
     {
         return Pin;
+    }
+
+    public List<Account> GetLinkedAccounts()
+    {
+        return LinkedAccounts;
+    }
+
+    public void GetOtherAccounts()
+    {
+        LinkedAccounts = new List<Account>();
+        LinkedAccounts.Add(LinkedAccount);
+        LinkedAccounts.Add(NewAccountType("Simple Deposit"));
+        LinkedAccounts.Add(NewAccountType("Long Term Deposit"));
     }
 
     public int Withdraw(int amount)
@@ -47,5 +62,30 @@ using System.Threading.Tasks;
         }
         return statements;   
     }
+
+    public string GetAccountType()
+    {
+        return LinkedAccount.GetAccountType();
+    }
+
+    public Account NewAccountType(string Type)
+    {
+        int ID = LinkedAccount.GetID();
+        double Balance  = LinkedAccount.GetBalance();
+        if (Type == "Current Account")
+        {
+            return LinkedAccount = new CurrentAccount(Type, ID, Balance); 
+        }
+        else if(Type == "Simple Deposit")
+        {
+            return LinkedAccount = new SimpleDeposit(Type, ID, Balance);
+        }
+        else if(Type == "Long Term Deposit")
+        {
+            return LinkedAccount = new LtDeposit(Type, ID, Balance);
+        }
+        return LinkedAccount;
+    }
+
 }
 

@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using System.Speech.Synthesis;
 namespace LloydMinisterATM
 {
@@ -23,8 +24,11 @@ namespace LloydMinisterATM
         public Card UserCard = new Card(123456789, 1111, new Account("Current Account",987654321,32500.79));
         public string Language = "English";
         public bool IsWithdraw { get; set; }
+        public bool IsTransfer { get; set; }
+        public bool PreventWithdrawl = false;
         public bool Authorised = false;
         public bool AudioAssistance = false;
+        public string Destination { get; set; }
         public string KeypadEntry {get;set;}
         public Form1()
         {
@@ -33,6 +37,18 @@ namespace LloydMinisterATM
             bn_Option_5.Text = "Change Language";
             bn_Option_6.Text = "Read Aloud";
             SpeakThis("Welcome to the LloydMinister ATM! If you require further audio assistance, the second button on the right side will enable text to speech...");
+            PreventWithdrawl = AssignCard();
+        }
+
+        private bool AssignCard()
+        {
+            UserCard.NewAccountType(UserCard.GetAccountType());
+            if(UserCard.LinkedAccount is LtDeposit)
+            {
+                return true;
+            }
+            return false;
+
         }
 
         private void ClearTerminal()
@@ -268,7 +284,23 @@ namespace LloydMinisterATM
 
         private void bn_Option_1_Click(object sender, EventArgs e)
         {
-            if(bn_Option_1.Text == "£10")
+            if (bn_Option_1.Text != "£10" && Authorised && bn_Option_1.Text != "English")
+            {
+                IsWithdraw = false;
+                IsTransfer = true;
+                SetDefaultCashAmounts();
+            }
+            else if (bn_Option_1.Text == "English")
+            {
+                Language = "English";
+                SetDefaultMenu();
+            }
+            else if(bn_Option_1.Text == "CurrentAccount")
+            {
+                Destination = "CurrentAccount";
+                SetDefaultCashAmounts();
+            }
+            if (bn_Option_1.Text == "£10")
             {
                 if(IsWithdraw)
                 {
@@ -276,19 +308,23 @@ namespace LloydMinisterATM
                 }
                 else
                 {
-
+                    UserCard.GetOtherAccounts();
+                    int index = 0;
+                    foreach(Account acc in UserCard.GetLinkedAccounts())
+                    {
+                        bn_Option_4.Text = "";
+                        bn_Option_5.Text = "";
+                        bn_Option_6.Text = "";
+                        bn_Option_7.Text = "";
+                        bn_Option_8.Text = "";
+                        if (index == 0) bn_Option_1.Text = acc.GetType().ToString();
+                        if (index == 1) bn_Option_2.Text = acc.GetType().ToString();
+                        if (index == 2) bn_Option_3.Text = acc.GetType().ToString();
+                        index++;
+                    }
                 }
             }
-            if(bn_Option_1.Text != "£10" && Authorised && bn_Option_1.Text != "English")
-            {
-                IsWithdraw = false;
-                SetDefaultCashAmounts();
-            }
-            else if(bn_Option_1.Text == "English")
-            {
-                Language = "English";
-                SetDefaultMenu();
-            }
+           
         }
 
         private void bn_Option_2_Click(object sender, EventArgs e)
@@ -300,8 +336,9 @@ namespace LloydMinisterATM
                     Withdraw(20);
                 }
             }
-            if (bn_Option_2.Text != "£20" && Authorised && bn_Option_2.Text != "Français")
+            if (bn_Option_2.Text != "£20" && Authorised && bn_Option_2.Text != "Français" && !PreventWithdrawl)
             {
+                IsTransfer = false;
                 IsWithdraw = true;
                 SetDefaultCashAmounts();
             }
@@ -309,6 +346,11 @@ namespace LloydMinisterATM
             {
                 Language = "Français";
                 SetDefaultMenu();
+            }
+            else if (bn_Option_2.Text == "SimpleDeposit")
+            {
+                Destination = "SimpleDeposit";
+                SetDefaultCashAmounts();
             }
         }
 
@@ -329,6 +371,11 @@ namespace LloydMinisterATM
             {
                 Language = "Deutsch";
                 SetDefaultMenu();
+            }
+            else if (bn_Option_3.Text == "LtDeposit")
+            {
+                Destination = "LtDeposit";
+                SetDefaultCashAmounts();
             }
         }
 
