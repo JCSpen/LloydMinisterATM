@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
     public class Card
     {
     protected int CardNum { get; set; }
+
+    protected int NumAttempts { get; set; }
     protected int Pin { get; set; }
     public Account LinkedAccount { get; set; }
 
@@ -23,6 +26,12 @@ using System.Threading.Tasks;
     public int GetPin()
     {
         return Pin;
+    }
+
+    public int AddAttempt()
+    {
+        NumAttempts++;
+        return NumAttempts;
     }
 
     public List<Account> GetLinkedAccounts()

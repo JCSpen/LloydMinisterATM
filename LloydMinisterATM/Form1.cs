@@ -28,15 +28,16 @@ namespace LloydMinisterATM
         public bool PreventWithdrawl = false;
         public bool Authorised = false;
         public bool AudioAssistance = false;
+        public int CardAttempts { get; set; }
         public string Destination { get; set; }
         public string KeypadEntry {get;set;}
         public Form1()
         {
             InitializeComponent();
             ClearTerminal();
+            CardAttempts = 0;
             bn_Option_5.Text = "Change Language";
             bn_Option_6.Text = "Read Aloud";
-            SpeakThis("Welcome to the LloydMinister ATM! If you require further audio assistance, the second button on the right side will enable text to speech...");
             PreventWithdrawl = AssignCard();
         }
 
@@ -277,8 +278,15 @@ namespace LloydMinisterATM
             }
             else
             {
-                MessageBox.Show("Incorrect Pin");
+                MessageBox.Show("Incorrect Pin, YOUR CARD WILL BE SWALLOWED AFTER 4 FAILED ATTEMPTS!");
                 ClearTerminal();
+            }
+
+            CardAttempts = UserCard.AddAttempt();
+            if(CardAttempts >= 4 && !Authorised)
+            {
+                MessageBox.Show("CARD SWALLOWED");
+                //SWALLOW CARD
             }
         }
 
@@ -316,7 +324,7 @@ namespace LloydMinisterATM
                         bn_Option_5.Text = "";
                         bn_Option_6.Text = "";
                         bn_Option_7.Text = "";
-                        bn_Option_8.Text = "";
+                        bn_Option_8.Text = "Menu";
                         if (index == 0) bn_Option_1.Text = acc.GetType().ToString();
                         if (index == 1) bn_Option_2.Text = acc.GetType().ToString();
                         if (index == 2) bn_Option_3.Text = acc.GetType().ToString();
@@ -388,7 +396,7 @@ namespace LloydMinisterATM
                     Withdraw(100);
                 }
             }
-            if (bn_Option_4.Text != "£100" && Authorised && bn_Option_4.Text != "Español")
+            if (bn_Option_4.Text != "£100" && Authorised && bn_Option_4.Text != "Español" && bn_Option_1.Text != "CurrentAccount")
             {
                 List<string> Statements = UserCard.GetStatements();
                 string statement = "";
@@ -534,6 +542,11 @@ namespace LloydMinisterATM
             {
                 SpeakThis(bn_Option_8.Text);
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            SpeakThis("Welcome to the LloydMinister ATM! If you require further audio assistance, the second button on the right side will enable text to speech...");
         }
     }
 }
