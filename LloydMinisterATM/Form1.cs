@@ -4,22 +4,6 @@ namespace LloydMinisterATM
 {
     public partial class Form1 : Form
     {
-        // HOME PAGE
-        // - DISPLAY BALANCE
-        // - WITHDRAW CASH
-        // - WITHDRAW CASH W/ RECEIPT
-        // - CHANGE YOUR PIN NUMBER
-        // - OTHER
-
-        // WITHDRAW PAGE
-        // - £5
-        // - £10
-        // - £20
-        // - £30
-        // - £40
-        // - £50
-        // - £100
-        // - OTHER
 
         public Card UserCard = new Card(123456789, 1111, new Account("Current Account",987654321,32500.79));
         public string Language = "English";
@@ -286,6 +270,7 @@ namespace LloydMinisterATM
             if(CardAttempts >= 4 && !Authorised)
             {
                 MessageBox.Show("CARD SWALLOWED");
+                this.Close();
                 //SWALLOW CARD
             }
         }
@@ -396,7 +381,7 @@ namespace LloydMinisterATM
                     Withdraw(100);
                 }
             }
-            if (bn_Option_4.Text != "£100" && Authorised && bn_Option_4.Text != "Español" && bn_Option_1.Text != "CurrentAccount")
+            if (bn_Option_4.Text != "£100" && Authorised && bn_Option_4.Text != "Español" && bn_Option_1.Text != "CurrentAccount" && bn_Option_4.Text != "")
             {
                 List<string> Statements = UserCard.GetStatements();
                 string statement = "";
@@ -422,7 +407,7 @@ namespace LloydMinisterATM
                     Withdraw(150);
                 }
             }
-            if (bn_Option_5.Text != "£150")
+            if (bn_Option_5.Text != "£150" && bn_Option_5.Text != "")
             {
                 bn_Option_1.Text = "English";
                 bn_Option_2.Text = "Français";
@@ -440,12 +425,12 @@ namespace LloydMinisterATM
                     Withdraw(200);
                 }
             }
-            if (bn_Option_6.Text != "£200" && !AudioAssistance )
+            if (bn_Option_6.Text != "£200" && !AudioAssistance && bn_Option_6.Text != "")
             {
                 AudioAssistance = true;
                 SpeakThis("Audio Assistance Enabled!");
             }
-            else if ((bn_Option_6.Text != "£200" && AudioAssistance))
+            else if (bn_Option_6.Text != "£200" && AudioAssistance && bn_Option_6.Text != "")
             {
                 AudioAssistance = false;
                 SpeakThis("Audio Assistance Disabled!");
@@ -460,7 +445,7 @@ namespace LloydMinisterATM
             {
                 if (IsWithdraw)
                 {
-                    Withdraw(2502);
+                    Withdraw(250);
                 }
             }
         }
